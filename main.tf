@@ -1,5 +1,5 @@
-resource "azurerm_iothub_dps" "iothub_dpss" {
-  for_each = var.iothub_dpss
+resource "azurerm_iothub_dps" "iothub_dpses" {
+  for_each = var.iothub_dpses
 
   location                      = each.value.location
   name                          = each.value.name

@@ -1,5 +1,5 @@
-output "iothub_dpss" {
+output "iothub_dpses" {
   description = "All iothub_dps resources"
-  value       = azurerm_iothub_dps.iothub_dpss
+  value       = azurerm_iothub_dps.iothub_dpses
 }
 
