@@ -15,7 +15,7 @@ resource "azurerm_iothub_dps" "iothub_dpses" {
   }
 
   dynamic "ip_filter_rule" {
-    for_each = each.value.ip_filter_rule != null ? [each.value.ip_filter_rule] : []
+    for_each = each.value.ip_filter_rule != null ? each.value.ip_filter_rule : []
     content {
       action  = ip_filter_rule.value.action
       ip_mask = ip_filter_rule.value.ip_mask
@@ -25,7 +25,7 @@ resource "azurerm_iothub_dps" "iothub_dpses" {
   }
 
   dynamic "linked_hub" {
-    for_each = each.value.linked_hub != null ? [each.value.linked_hub] : []
+    for_each = each.value.linked_hub != null ? each.value.linked_hub : []
     content {
       allocation_weight       = linked_hub.value.allocation_weight
       apply_allocation_policy = linked_hub.value.apply_allocation_policy
