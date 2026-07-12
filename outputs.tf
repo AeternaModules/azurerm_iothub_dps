@@ -1,3 +1,7 @@
+output "iothub_dpses_id" {
+  description = "Map of id values across all iothub_dpses, keyed the same as var.iothub_dpses"
+  value       = { for k, v in azurerm_iothub_dps.iothub_dpses : k => v.id }
+}
 output "iothub_dpses_allocation_policy" {
   description = "Map of allocation_policy values across all iothub_dpses, keyed the same as var.iothub_dpses"
   value       = { for k, v in azurerm_iothub_dps.iothub_dpses : k => v.allocation_policy }
