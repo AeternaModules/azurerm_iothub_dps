@@ -50,66 +50,78 @@ EOT
       location                = string
     })))
   }))
-  # --- Unconfirmed validation candidates, derived from azurerm_iothub_dps's provider source ---
-  # Not auto-enabled: either a bespoke provider validator we can't safely translate,
-  # or a path that crosses a list-typed block (needs its own for_each wrapping).
-  # Review, translate into a real validation{} block above, and delete once confirmed.
-  # path: name
-  #   source:    [from iothubValidate.IoTHubName] !matched
-  # path: resource_group_name
-  #   condition: length(value) <= 90
-  #   message:   [from resourcegroups.ValidateName: invalid when len(value) > 90]
-  #   source:    [from resourcegroups.ValidateName: invalid when len(value) > 90]
-  # path: resource_group_name
-  #   condition: !endswith(value, ".")
-  #   message:   [from resourcegroups.ValidateName: must not end with "."]
-  #   source:    [from resourcegroups.ValidateName: must not end with "."]
-  # path: resource_group_name
-  #   condition: length(value) != 0
-  #   message:   [from resourcegroups.ValidateName: invalid when len(value) == 0]
-  #   source:    [from resourcegroups.ValidateName: invalid when len(value) == 0]
-  # path: resource_group_name
-  #   source:    [from resourcegroups.ValidateName] !matched
-  # path: location
-  #   source:    location.EnhancedValidate: no recognizable `if ... { errors = append(...) }` pattern - read it by hand
-  # path: sku.name
-  #   source:    validation.StringInSlice value list is not a literal []string - likely a generated PossibleValuesFor*() helper; resolve separately
-  # path: sku.capacity
-  #   condition: value >= 1 && value <= 200
-  #   message:   must be between 1 and 200
-  # path: linked_hub.connection_string
-  #   condition: length(value) > 0
-  #   message:   must not be empty
-  # path: linked_hub.location
-  #   condition: length(value) > 0
-  #   message:   must not be empty
-  # path: linked_hub.allocation_weight
-  #   condition: value >= 0 && value <= 1000
-  #   message:   must be between 0 and 1000
-  # path: ip_filter_rule.name
-  #   condition: length(value) > 0
-  #   message:   must not be empty
-  # path: ip_filter_rule.ip_mask
-  #   source:    [from validate.CIDR] re != nil && !re.MatchString(cidr)
-  # path: ip_filter_rule.action
-  #   source:    validation.StringInSlice value list is not a literal []string - likely a generated PossibleValuesFor*() helper; resolve separately
-  # path: ip_filter_rule.target
-  #   source:    validation.StringInSlice value list is not a literal []string - likely a generated PossibleValuesFor*() helper; resolve separately
-  # path: allocation_policy
-  #   source:    validation.StringInSlice value list is not a literal []string - likely a generated PossibleValuesFor*() helper; resolve separately
-  # path: tags
-  #   condition: length(value) <= 50
-  #   message:   [from tags.Validate: invalid when len(value) > 50]
-  #   source:    [from tags.Validate: invalid when len(value) > 50]
-  # path: tags
-  #   condition: length(value) <= 512
-  #   message:   [from tags.Validate: invalid when len(value) > 512]
-  #   source:    [from tags.Validate: invalid when len(value) > 512]
-  # path: tags
-  #   source:    [from tags.Validate] err != nil
-  # path: tags
-  #   condition: length(value) <= 256
-  #   message:   [from tags.Validate: invalid when len(value) > 256]
-  #   source:    [from tags.Validate: invalid when len(value) > 256]
+  validation {
+    condition = alltrue([
+      for k, v in var.iothub_dpses : (
+        length(v.resource_group_name) <= 90
+      )
+    ])
+    error_message = "[from resourcegroups.ValidateName: invalid when len(value) > 90]"
+  }
+  validation {
+    condition = alltrue([
+      for k, v in var.iothub_dpses : (
+        !endswith(v.resource_group_name, ".")
+      )
+    ])
+    error_message = "[from resourcegroups.ValidateName: must not end with \".\"]"
+  }
+  validation {
+    condition = alltrue([
+      for k, v in var.iothub_dpses : (
+        length(v.resource_group_name) != 0
+      )
+    ])
+    error_message = "[from resourcegroups.ValidateName: invalid when len(value) == 0]"
+  }
+  validation {
+    condition = alltrue([
+      for k, v in var.iothub_dpses : (
+        v.sku.capacity >= 1 && v.sku.capacity <= 200
+      )
+    ])
+    error_message = "must be between 1 and 200"
+  }
+  validation {
+    condition = alltrue([
+      for k, v in var.iothub_dpses : (
+        v.linked_hub == null || alltrue([for item in v.linked_hub : (length(item.connection_string) > 0)])
+      )
+    ])
+    error_message = "must not be empty"
+  }
+  validation {
+    condition = alltrue([
+      for k, v in var.iothub_dpses : (
+        v.linked_hub == null || alltrue([for item in v.linked_hub : (length(item.location) > 0)])
+      )
+    ])
+    error_message = "must not be empty"
+  }
+  validation {
+    condition = alltrue([
+      for k, v in var.iothub_dpses : (
+        v.linked_hub == null || alltrue([for item in v.linked_hub : (item.allocation_weight == null || (item.allocation_weight >= 0 && item.allocation_weight <= 1000))])
+      )
+    ])
+    error_message = "must be between 0 and 1000"
+  }
+  validation {
+    condition = alltrue([
+      for k, v in var.iothub_dpses : (
+        v.ip_filter_rule == null || alltrue([for item in v.ip_filter_rule : (length(item.name) > 0)])
+      )
+    ])
+    error_message = "must not be empty"
+  }
+  validation {
+    condition = alltrue([
+      for k, v in var.iothub_dpses : (
+        v.tags == null || (length(v.tags) <= 50)
+      )
+    ])
+    error_message = "[from tags.Validate: invalid when len(value) > 50]"
+  }
+  # Note: 11 additional provider-side validators are enforced at apply time but not mirrored as validation{} blocks here (bespoke or non-mechanically-translatable).
 }
 
