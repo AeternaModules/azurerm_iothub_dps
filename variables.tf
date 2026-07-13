@@ -29,9 +29,9 @@ EOT
     location                      = string
     name                          = string
     resource_group_name           = string
-    allocation_policy             = optional(string) # Default: "Hashed"
-    data_residency_enabled        = optional(bool)   # Default: false
-    public_network_access_enabled = optional(bool)   # Default: true
+    allocation_policy             = optional(string)
+    data_residency_enabled        = optional(bool)
+    public_network_access_enabled = optional(bool)
     tags                          = optional(map(string))
     sku = object({
       capacity = number
@@ -44,8 +44,8 @@ EOT
       target  = optional(string)
     })))
     linked_hub = optional(list(object({
-      allocation_weight       = optional(number) # Default: 1
-      apply_allocation_policy = optional(bool)   # Default: true
+      allocation_weight       = optional(number)
+      apply_allocation_policy = optional(bool)
       connection_string       = string
       location                = string
     })))
