@@ -1,6 +1,6 @@
-variable "iothub_dpses" {
+variable "iothub_dps" {
   description = <<EOT
-Map of iothub_dpses, attributes below
+Map of iothub_dps, attributes below
 Required:
     - location
     - name
@@ -52,7 +52,7 @@ EOT
   }))
   validation {
     condition = alltrue([
-      for k, v in var.iothub_dpses : (
+      for k, v in var.iothub_dps : (
         length(v.resource_group_name) <= 90
       )
     ])
@@ -60,7 +60,7 @@ EOT
   }
   validation {
     condition = alltrue([
-      for k, v in var.iothub_dpses : (
+      for k, v in var.iothub_dps : (
         !endswith(v.resource_group_name, ".")
       )
     ])
@@ -68,7 +68,7 @@ EOT
   }
   validation {
     condition = alltrue([
-      for k, v in var.iothub_dpses : (
+      for k, v in var.iothub_dps : (
         length(v.resource_group_name) != 0
       )
     ])
@@ -76,7 +76,7 @@ EOT
   }
   validation {
     condition = alltrue([
-      for k, v in var.iothub_dpses : (
+      for k, v in var.iothub_dps : (
         v.sku.capacity >= 1 && v.sku.capacity <= 200
       )
     ])
@@ -84,7 +84,7 @@ EOT
   }
   validation {
     condition = alltrue([
-      for k, v in var.iothub_dpses : (
+      for k, v in var.iothub_dps : (
         v.linked_hub == null || alltrue([for item in v.linked_hub : (length(item.connection_string) > 0)])
       )
     ])
@@ -92,7 +92,7 @@ EOT
   }
   validation {
     condition = alltrue([
-      for k, v in var.iothub_dpses : (
+      for k, v in var.iothub_dps : (
         v.linked_hub == null || alltrue([for item in v.linked_hub : (length(item.location) > 0)])
       )
     ])
@@ -100,7 +100,7 @@ EOT
   }
   validation {
     condition = alltrue([
-      for k, v in var.iothub_dpses : (
+      for k, v in var.iothub_dps : (
         v.linked_hub == null || alltrue([for item in v.linked_hub : (item.allocation_weight == null || (item.allocation_weight >= 0 && item.allocation_weight <= 1000))])
       )
     ])
@@ -108,7 +108,7 @@ EOT
   }
   validation {
     condition = alltrue([
-      for k, v in var.iothub_dpses : (
+      for k, v in var.iothub_dps : (
         v.ip_filter_rule == null || alltrue([for item in v.ip_filter_rule : (length(item.name) > 0)])
       )
     ])
@@ -116,7 +116,7 @@ EOT
   }
   validation {
     condition = alltrue([
-      for k, v in var.iothub_dpses : (
+      for k, v in var.iothub_dps : (
         v.tags == null || (length(v.tags) <= 50)
       )
     ])
