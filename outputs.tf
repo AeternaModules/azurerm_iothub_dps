@@ -49,7 +49,7 @@ output "iothub_dps_service_operations_host_name" {
 }
 output "iothub_dps_sku" {
   description = "Map of sku values across all iothub_dps, keyed the same as var.iothub_dps"
-  value       = { for k, v in azurerm_iothub_dps.iothub_dps : k => v.sku if v.sku != null && length(v.sku) > 0 }
+  value       = { for k, v in azurerm_iothub_dps.iothub_dps : k => one(v.sku) if v.sku != null && length(v.sku) > 0 }
 }
 output "iothub_dps_tags" {
   description = "Map of tags values across all iothub_dps, keyed the same as var.iothub_dps"
